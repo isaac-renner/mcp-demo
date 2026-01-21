@@ -1,6 +1,6 @@
 # slack-codemode
 
-A Slack MCP server for reading threads from URLs.
+A Slack MCP server for reading threads from URLs. Supports both MCP protocol and OpenControl.
 
 ## Installation
 
@@ -11,10 +11,9 @@ npm run build
 
 ## Configuration
 
-Set the `SLACK_BOT_TOKEN` environment variable:
-
 ```bash
 export SLACK_BOT_TOKEN=xoxb-your-token-here
+export ANTHROPIC_API_KEY=sk-ant-your-key-here  # for OpenControl
 ```
 
 ### Required Slack Bot Scopes
@@ -25,7 +24,28 @@ export SLACK_BOT_TOKEN=xoxb-your-token-here
 - `mpim:history`
 - `users:read`
 
-## MCP Configuration
+## Usage
+
+### OpenControl (CLI)
+
+Start the OpenControl server:
+
+```bash
+npm run opencontrol
+```
+
+Then connect with any MCP client:
+
+```bash
+# Claude Code
+claude mcp add slack npx opencontrol http://localhost:3000 <password>
+```
+
+Or open `http://localhost:3000` in your browser for the chat UI.
+
+### MCP Server
+
+Add to your MCP client configuration:
 
 ```json
 {
@@ -88,9 +108,10 @@ Parse a Slack URL to extract IDs and timestamps. No API call.
 ## Development
 
 ```bash
-npm run dev    # Development mode
-npm run build  # Build
-npm start      # Run production build
+npm run dev           # MCP server (dev)
+npm run opencontrol   # OpenControl server
+npm run build         # Build
+npm start             # MCP server (production)
 ```
 
 ## License

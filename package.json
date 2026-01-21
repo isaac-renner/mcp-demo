@@ -1,25 +1,30 @@
 {
   "name": "slack-codemode",
   "version": "0.1.0",
-  "description": "A Slack MCP server inspired by Cloudflare's codemode approach - read Slack threads from URLs",
+  "description": "A Slack MCP server for reading threads from URLs",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "tsx src/index.ts"
+    "dev": "tsx src/index.ts",
+    "opencontrol": "tsx src/opencontrol.ts"
   },
   "keywords": [
     "mcp",
     "slack",
-    "codemode",
+    "opencontrol",
     "ai",
     "agent"
   ],
   "license": "MIT",
   "dependencies": {
+    "@ai-sdk/anthropic": "^1.0.0",
+    "@hono/node-server": "^1.0.0",
     "@modelcontextprotocol/sdk": "^1.0.0",
     "@slack/web-api": "^7.0.0",
+    "hono": "^4.0.0",
+    "opencontrol": "^0.0.0",
     "zod": "^3.23.0"
   },
   "devDependencies": {

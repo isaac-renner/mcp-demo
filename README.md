@@ -1,6 +1,6 @@
 # slack-codemode
 
-A Slack MCP server for reading threads from URLs. Supports both MCP protocol and OpenControl.
+A Slack MCP server for reading threads and posting messages. Supports both MCP protocol and OpenControl.
 
 ## Installation
 
@@ -23,6 +23,7 @@ export ANTHROPIC_API_KEY=sk-ant-your-key-here  # for OpenControl
 - `im:history`
 - `mpim:history`
 - `users:read`
+- `chat:write`
 
 ## Usage
 
@@ -86,6 +87,26 @@ Get channel metadata.
 | `channel_id` | string | Yes | Slack channel ID (e.g., C1234567890) |
 
 **Returns:** Channel name, topic, purpose, member count, privacy status.
+
+### `post_message`
+
+Post a message to a Slack channel. Links are automatically unfurled.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `channel_id` | string | Yes | Slack channel ID to post to |
+| `text` | string | Yes | Message text (can include URLs) |
+| `thread_ts` | string | No | Thread timestamp to reply in a thread |
+
+**Returns:**
+```json
+{
+  "ok": true,
+  "channel": "C1234567890",
+  "ts": "1234567890.123456",
+  "message": "Posted message text"
+}
+```
 
 ### `parse_slack_url`
 

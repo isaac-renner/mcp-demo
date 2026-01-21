@@ -168,4 +168,28 @@ export async function getChannelInfo(channelId: string): Promise<string> {
     .join("\n");
 }
 
+export async function postMessage(input: {
+  channel_id: string;
+  text: string;
+  thread_ts?: string;
+}): Promise<string> {
+  const response = await slack.chat.postMessage({
+    channel: input.channel_id,
+    text: input.text,
+    thread_ts: input.thread_ts,
+    unfurl_links: true,
+  });
+
+  if (!response.ok) {
+    throw new Error(response.error || "Failed to post message");
+  }
+
+  return JSON.stringify({
+    ok: true,
+    channel: response.channel,
+    ts: response.ts,
+    message: response.message?.text,
+  }, null, 2);
+}
+
 export { parseSlackUrl, isSlackUrl };

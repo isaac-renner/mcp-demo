@@ -3,7 +3,7 @@ import { tool } from "opencontrol/tool";
 import { create } from "opencontrol";
 import { serve } from "@hono/node-server";
 import { createAnthropic } from "@ai-sdk/anthropic";
-import { readSlackThread, getChannelInfo, parseSlackUrl, isSlackUrl } from "./slack.js";
+import { readSlackThread, getChannelInfo, postMessage, parseSlackUrl, isSlackUrl } from "./slack.js";
 
 const readThread = tool({
   name: "read_slack_thread",
@@ -47,11 +47,24 @@ const parseUrl = tool({
   },
 });
 
+const postMsg = tool({
+  name: "post_message",
+  description: "Post a message to a Slack channel. Can include links which will be unfurled.",
+  args: z.object({
+    channel_id: z.string().describe("The Slack channel ID to post to (e.g., C1234567890)"),
+    text: z.string().describe("The message text to post (can include URLs)"),
+    thread_ts: z.string().optional().describe("Optional thread timestamp to reply in a thread"),
+  }),
+  async run(input) {
+    return postMessage(input);
+  },
+});
+
 const app = create({
   model: createAnthropic({
     apiKey: process.env.ANTHROPIC_API_KEY,
   })("claude-sonnet-4-20250514"),
-  tools: [readThread, channelInfo, parseUrl],
+  tools: [readThread, channelInfo, parseUrl, postMsg],
 });
 
 const port = parseInt(process.env.PORT || "3000");

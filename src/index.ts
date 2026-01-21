@@ -7,7 +7,7 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
-import { readSlackThread, getChannelInfo, parseSlackUrl, isSlackUrl } from "./slack.js";
+import { readSlackThread, getChannelInfo, postMessage, parseSlackUrl, isSlackUrl } from "./slack.js";
 
 const ReadThreadSchema = z.object({
   url: z.string(),
@@ -17,6 +17,12 @@ const ReadThreadSchema = z.object({
 
 const GetChannelInfoSchema = z.object({
   channel_id: z.string(),
+});
+
+const PostMessageSchema = z.object({
+  channel_id: z.string(),
+  text: z.string(),
+  thread_ts: z.string().optional(),
 });
 
 const server = new Server(
@@ -82,6 +88,29 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ["url"],
         },
       },
+      {
+        name: "post_message",
+        description:
+          "Post a message to a Slack channel. Can include links which will be unfurled.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            channel_id: {
+              type: "string",
+              description: "The Slack channel ID to post to (e.g., C1234567890)",
+            },
+            text: {
+              type: "string",
+              description: "The message text to post (can include URLs)",
+            },
+            thread_ts: {
+              type: "string",
+              description: "Optional thread timestamp to reply in a thread",
+            },
+          },
+          required: ["channel_id", "text"],
+        },
+      },
     ],
   };
 });
@@ -124,6 +153,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return {
           content: [{ type: "text", text: JSON.stringify(urlInfo, null, 2) }],
         };
+      }
+
+      case "post_message": {
+        const input = PostMessageSchema.parse(args);
+        const result = await postMessage(input);
+        return { content: [{ type: "text", text: result }] };
       }
 
       default:

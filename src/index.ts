@@ -26,7 +26,7 @@ const PostMessageSchema = z.object({
 });
 
 const server = new Server(
-  { name: "slack-codemode", version: "0.1.0" },
+  { name: "mcp-demo", version: "0.1.0" },
   { capabilities: { tools: {} } }
 );
 

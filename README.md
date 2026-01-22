@@ -1,4 +1,4 @@
-# slack-codemode
+# mcp-demo
 
 A Slack MCP server for reading threads and posting messages. Supports both MCP protocol and OpenControl.
 
@@ -53,7 +53,7 @@ Add to your MCP client configuration:
   "mcpServers": {
     "slack": {
       "command": "node",
-      "args": ["/path/to/slack-codemode/dist/index.js"],
+      "args": ["/path/to/mcp-demo/dist/index.js"],
       "env": {
         "SLACK_BOT_TOKEN": "xoxb-your-token-here"
       }

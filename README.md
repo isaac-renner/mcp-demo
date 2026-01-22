@@ -1,20 +1,17 @@
 # mcp-demo
 
-A Slack MCP server for reading threads and posting messages. Supports both MCP protocol and OpenControl.
+A Slack MCP server for reading threads and posting messages.
 
 ## Installation
 
 ```bash
+git clone https://github.com/isaac-renner/mcp-demo.git
+cd mcp-demo
 npm install
 npm run build
 ```
 
 ## Configuration
-
-```bash
-export SLACK_BOT_TOKEN=xoxb-your-token-here
-export ANTHROPIC_API_KEY=sk-ant-your-key-here  # for OpenControl
-```
 
 ### Required Slack Bot Scopes
 
@@ -27,26 +24,32 @@ export ANTHROPIC_API_KEY=sk-ant-your-key-here  # for OpenControl
 
 ## Usage
 
-### OpenControl (CLI)
+### OpenCode
 
-Start the OpenControl server:
+Add to `~/.config/opencode/opencode.json` or `opencode.json` in your project:
 
-```bash
-npm run opencontrol
+```json
+{
+  "mcp": {
+    "slack": {
+      "type": "local",
+      "command": ["node", "/path/to/mcp-demo/dist/index.js"],
+      "enabled": true,
+      "environment": {
+        "SLACK_BOT_TOKEN": "xoxb-your-token-here"
+      }
+    }
+  }
+}
 ```
 
-Then connect with any MCP client:
+### Claude Code
 
 ```bash
-# Claude Code
-claude mcp add slack npx opencontrol http://localhost:3000 <password>
+claude mcp add slack -- node /path/to/mcp-demo/dist/index.js
 ```
 
-Or open `http://localhost:3000` in your browser for the chat UI.
-
-### MCP Server
-
-Add to your MCP client configuration:
+Then set the environment variable in Claude Code's config (`~/.config/claude/config.json`):
 
 ```json
 {
@@ -61,6 +64,25 @@ Add to your MCP client configuration:
   }
 }
 ```
+
+Or export the token before running:
+
+```bash
+export SLACK_BOT_TOKEN=xoxb-your-token-here
+claude
+```
+
+### OpenControl (Web UI)
+
+Start the OpenControl server for a chat interface:
+
+```bash
+export SLACK_BOT_TOKEN=xoxb-your-token-here
+export ANTHROPIC_API_KEY=sk-ant-your-key-here
+npm run opencontrol
+```
+
+Open `http://localhost:3000` in your browser.
 
 ## Tools
 
@@ -98,16 +120,6 @@ Post a message to a Slack channel. Links are automatically unfurled.
 | `text` | string | Yes | Message text (can include URLs) |
 | `thread_ts` | string | No | Thread timestamp to reply in a thread |
 
-**Returns:**
-```json
-{
-  "ok": true,
-  "channel": "C1234567890",
-  "ts": "1234567890.123456",
-  "message": "Posted message text"
-}
-```
-
 ### `parse_slack_url`
 
 Parse a Slack URL to extract IDs and timestamps. No API call.
@@ -115,16 +127,6 @@ Parse a Slack URL to extract IDs and timestamps. No API call.
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `url` | string | Yes | Slack URL to parse |
-
-**Returns:**
-```json
-{
-  "workspace": "myworkspace",
-  "channelId": "C1234567890",
-  "messageTs": "1234567890.123456",
-  "threadTs": "1234567890.123456"
-}
-```
 
 ## Development
 
